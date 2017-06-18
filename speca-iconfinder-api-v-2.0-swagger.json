@@ -1,0 +1,1530 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "NOT OFFICIAL documentation of Iconfinder REST API v2.0",
+    "version" : "",
+    "title" : "IconFinder API v 2.0"
+  },
+  "host" : "api.iconfinder.com",
+  "basePath" : "/v2",
+  "schemes" : [
+    "https"
+  ],
+  "paths" : {
+    "/oauth2/authorize" : {
+      "get" : {
+        "summary" : "Begin the authorization flow",
+        "description" : "The method is used to begin the authorization flow",
+        "operationId" : "begin-the-authorization-flow",
+        "parameters" : [
+          {
+            "name" : "client_id",
+            "in" : "query",
+            "description" : "your application's client ID.",
+            "required" : false,
+            "type" : "string"
+          },
+          {
+            "name" : "response_type",
+            "in" : "query",
+            "description" : "Response type. Must be `code` for web application registration.",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "scope",
+            "in" : "query",
+            "description" : "Optional comma separated list of scopes. See [scopes]() for more details.",
+            "required" : false,
+            "type" : "string"
+          },
+          {
+            "name" : "state",
+            "in" : "query",
+            "description" : "Optional random string used to protect against cross site request forgery attacks.",
+            "required" : false,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "If the user chooses to authorize your application, \nIconfinder redirects back to your site at the callback URL you configured for your application when registering it. \nThe URL will include with an intermediate `code` in the code request parameter as well as the opaque `state` value if provided. \nIf no `code` parameter is provided, \nit means that the user did not choose to authorize your application. \nIf you supplied a `state` parameter, make sure to validate this to avoid security vulnerabilities."
+          }
+        }
+      }
+    },
+    "/oauth2/token" : {
+      "get" : {
+        "summary" : "Obtain access token",
+        "description" : "Once you have the intermediate code, it must be exchanged for an access token that will be used for all authenticated requests. Access tokens are obtained at the following URL:",
+        "operationId" : "obtain-access-token",
+        "parameters" : [
+          {
+            "name" : "client_id",
+            "in" : "query",
+            "description" : "Your application's client ID.",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "client_secret",
+            "in" : "query",
+            "description" : "Your application's client secret.",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "code",
+            "in" : "query",
+            "description" : "The intermediate code received from Iconfinder.\nThe result of [Begin the authorization flow](//cool)",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "grant_type",
+            "in" : "query",
+            "description" : "Grant type. Must be authorization_code to indicate that the token is granted based on an `authorization code`.",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "pon successful exchange of the intermediate code, Iconfinder returns a JSON response with the access token and token type issued. Access tokens are guaranteed to be alphanumerical strings of 64 byte lengths:",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "access_token" : {
+                  "type" : "string",
+                  "example" : "mUZrfE9MJySA1YTyGl9HsMjIypWNtl9jqjpfqxMKakdV00Fkh6C38gZkztrtCzWS"
+                },
+                "token_type" : {
+                  "type" : "string",
+                  "example" : "Bearer"
+                }
+              },
+              "required" : [
+                "access_token",
+                "token_type"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/authors/{author id}" : {
+      "get" : {
+        "summary" : "Get author details",
+        "description" : "Get details about a specific author identified by a unique ID.",
+        "operationId" : "get-author-details",
+        "parameters" : [
+          {
+            "name" : "author id",
+            "in" : "path",
+            "description" : "Author ID",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "in" : "body",
+            "name" : "body",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/definitions/Author"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/categories" : {
+      "get" : {
+        "summary" : "List all categories",
+        "description" : "List all categories sorted ascendingly by their `identifier`.",
+        "operationId" : "list-all-categories",
+        "parameters" : [
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "number",
+                  "format" : "double",
+                  "example" : 40.0
+                },
+                "categories" : {
+                  "$ref" : "#/definitions/Category"
+                }
+              },
+              "required" : [
+                "categories",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category identifier}" : {
+      "get" : {
+        "summary" : "Get category details",
+        "description" : "t details about a specific category identified by its `identifier`.",
+        "operationId" : "get-category-details",
+        "parameters" : [
+          {
+            "name" : "category identifier",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Category"
+            }
+          }
+        }
+      }
+    },
+    "/iconsets/{icon set identifier}/icons" : {
+      "get" : {
+        "summary" : "List all icons in an icon set",
+        "description" : "Provides a list of all icons in an icon set sorted descendingly by the popularity of the icons.",
+        "operationId" : "list-all-icons-in-an-icon-set",
+        "parameters" : [
+          {
+            "name" : "icon set identifier",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "name" : "after",
+            "in" : "query",
+            "description" : "Icon ID of the last icon received. If empty, the count most popular icons are returned.",
+            "required" : false,
+            "type" : "integer"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "number",
+                  "format" : "double",
+                  "example" : 1.0
+                },
+                "icons" : {
+                  "$ref" : "#/definitions/Icon"
+                }
+              },
+              "required" : [
+                "icons",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/icons/{icon id}" : {
+      "get" : {
+        "summary" : "Get icon details",
+        "description" : "Get details about a specific icon.",
+        "operationId" : "get-details-about-a-specific-icon",
+        "parameters" : [
+          {
+            "name" : "icon id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Icon"
+            }
+          }
+        }
+      }
+    },
+    "/icons/search" : {
+      "post" : {
+        "summary" : "Search for icons",
+        "description" : "Search through icons by various criteria. The returned list of icons is ordered descendingly by popularity.",
+        "operationId" : "search-for-icons",
+        "parameters" : [
+          {
+            "name" : "query",
+            "in" : "query",
+            "description" : "Search query",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "offset",
+            "in" : "query",
+            "description" : "Result offset. Starts from 0, resulting in the first count icons being returned.",
+            "required" : false,
+            "type" : "number",
+            "minimum" : 0.0
+          },
+          {
+            "name" : "size_minimum",
+            "in" : "query",
+            "description" : "Minimum icon size to include in search result.",
+            "required" : false,
+            "type" : "number",
+            "default" : 0.0
+          },
+          {
+            "name" : "size_maximum",
+            "in" : "query",
+            "description" : "Maximum icon size to include in search result.",
+            "required" : false,
+            "type" : "number",
+            "default" : 512.0
+          },
+          {
+            "name" : "category",
+            "in" : "query",
+            "description" : "icon category",
+            "required" : false,
+            "type" : "string"
+          },
+          {
+            "name" : "style",
+            "in" : "query",
+            "description" : "icon style",
+            "required" : false,
+            "type" : "string"
+          },
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string",
+                  "example" : "442"
+                },
+                "icons" : {
+                  "$ref" : "#/definitions/Icon"
+                }
+              },
+              "required" : [
+                "icons",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/iconsets" : {
+      "get" : {
+        "summary" : "List all public icon sets",
+        "description" : "List all public icon sets in descending order of when they were published.",
+        "operationId" : "list-all-public-icon-sets",
+        "parameters" : [
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string"
+                },
+                "iconsets" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Iconset"
+                  }
+                }
+              },
+              "required" : [
+                "iconsets",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/styles/{style identifier}/iconsets" : {
+      "get" : {
+        "summary" : "List icon sets of a specific style",
+        "description" : "List public icon sets of a specific style in descending order of when they were published.",
+        "operationId" : "list-icon-sets-of-a-specific-style",
+        "parameters" : [
+          {
+            "name" : "style identifier",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string"
+                },
+                "iconsets" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Iconset"
+                  }
+                }
+              },
+              "required" : [
+                "iconsets",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category identifier}/iconsets" : {
+      "get" : {
+        "summary" : "List icon sets in a category",
+        "description" : "List public icon sets in a category in descending order of when they were published.",
+        "operationId" : "list-icon-sets-in-a-category",
+        "parameters" : [
+          {
+            "name" : "category identifier",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string"
+                },
+                "iconsets" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Iconset"
+                  }
+                }
+              },
+              "required" : [
+                "iconsets",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/v2/users/{userid or username}/iconsets" : {
+      "get" : {
+        "summary" : "List a user's icon sets",
+        "description" : "List all public icon sets owned by a specific user in descending order of when they were published.",
+        "operationId" : "list-a-user-s-icon-sets",
+        "parameters" : [
+          {
+            "name" : "userid or username",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string"
+                },
+                "iconsets" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Iconset"
+                  }
+                }
+              },
+              "required" : [
+                "iconsets",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/authors/{author id}/iconsets" : {
+      "get" : {
+        "summary" : "List an author's icon sets",
+        "description" : "List all public icon sets owned by a specific author in descending order of when they were published.",
+        "operationId" : "list-an-author-s-icon-sets",
+        "parameters" : [
+          {
+            "name" : "author id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string"
+                },
+                "iconsets" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Iconset"
+                  }
+                }
+              },
+              "required" : [
+                "iconsets",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/user/iconsets" : {
+      "get" : {
+        "summary" : "List an authenticated user's icon sets",
+        "description" : "List all public icon sets owned by the authenticated user in descending order of when they were published.",
+        "operationId" : "list-an-authenticated-user-s-icon-sets",
+        "parameters" : [
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          },
+          {
+            "$ref" : "#/parameters/premium"
+          },
+          {
+            "$ref" : "#/parameters/vector"
+          },
+          {
+            "$ref" : "#/parameters/license"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "string"
+                },
+                "iconsets" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Iconset"
+                  }
+                }
+              },
+              "required" : [
+                "iconsets",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/iconsets/{icon set id or identifier}" : {
+      "get" : {
+        "summary" : "Get icon set details",
+        "description" : "Get details about a specific icon set.",
+        "operationId" : "get-details-about-a-specific-icon-set",
+        "parameters" : [
+          {
+            "name" : "icon set id or identifier",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Iconset"
+            }
+          }
+        }
+      }
+    },
+    "/licenses/{license id}" : {
+      "get" : {
+        "summary" : "Get license details",
+        "description" : "Get details about a specific license by its unique ID.",
+        "operationId" : "get-license-details",
+        "parameters" : [
+          {
+            "name" : "license id",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/License"
+            }
+          }
+        }
+      }
+    },
+    "/styles" : {
+      "get" : {
+        "summary" : "List all styles",
+        "description" : "List all styles sorted ascendingly by their identifier.",
+        "operationId" : "list-all-styles",
+        "parameters" : [
+          {
+            "$ref" : "#/parameters/count"
+          },
+          {
+            "$ref" : "#/parameters/after"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "total_count" : {
+                  "type" : "number",
+                  "format" : "double",
+                  "example" : 9.0
+                },
+                "styles" : {
+                  "type" : "object",
+                  "properties" : {
+                    "identifier" : {
+                      "type" : "string",
+                      "example" : "3d"
+                    },
+                    "name" : {
+                      "type" : "string",
+                      "example" : "3D"
+                    }
+                  },
+                  "required" : [
+                    "identifier",
+                    "name"
+                  ]
+                }
+              },
+              "required" : [
+                "styles",
+                "total_count"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/styles/{style identifier}" : {
+      "get" : {
+        "summary" : "Get style details",
+        "description" : "Get details about a specific style identified by its `identifier`.",
+        "operationId" : "get-style-details",
+        "parameters" : [
+          {
+            "name" : "style identifier",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "identifier" : {
+                  "type" : "string",
+                  "example" : "flat"
+                },
+                "name" : {
+                  "type" : "string",
+                  "example" : "Flat"
+                }
+              },
+              "required" : [
+                "identifier",
+                "name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/users/{userid or username}" : {
+      "get" : {
+        "summary" : "Get user details",
+        "description" : "Get details about a specific user.",
+        "operationId" : "get-user-details",
+        "parameters" : [
+          {
+            "name" : "userid or username",
+            "in" : "path",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/User"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Author" : {
+      "type" : "object",
+      "required" : [
+        "author_id",
+        "iconsets_count",
+        "name",
+        "website_url"
+      ],
+      "properties" : {
+        "website_url" : {
+          "type" : "string",
+          "example" : "http://www.everaldo.com/"
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Everaldo Coelho"
+        },
+        "author_id" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 2.0
+        },
+        "iconsets_count" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 12.0
+        }
+      },
+      "description" : "See [Format Model](model://Format) **bold**"
+    },
+    "Category" : {
+      "type" : "object",
+      "required" : [
+        "identifier",
+        "name"
+      ],
+      "properties" : {
+        "identifier" : {
+          "type" : "string",
+          "example" : "halloween"
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Halloween"
+        }
+      }
+    },
+    "Format" : {
+      "type" : "object",
+      "required" : [
+        "download_url",
+        "format",
+        "preview_url"
+      ],
+      "properties" : {
+        "preview_url" : {
+          "type" : "string",
+          "example" : "https://cdn1.iconfinder.com/data/icons/streamline-business-finance/60/cell-0-12-30.png"
+        },
+        "download_url" : {
+          "type" : "string",
+          "example" : "/icons/233366/formats/png/30/download"
+        },
+        "format" : {
+          "type" : "string",
+          "example" : "png"
+        }
+      }
+    },
+    "IdAndName" : {
+      "type" : "object",
+      "required" : [
+        "identifier",
+        "name"
+      ],
+      "properties" : {
+        "identifier" : {
+          "type" : "string",
+          "example" : "outline"
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Outline"
+        }
+      },
+      "description" : "Name - Description pair"
+    },
+    "License" : {
+      "type" : "object",
+      "required" : [
+        "license_id",
+        "name",
+        "scope",
+        "url"
+      ],
+      "properties" : {
+        "license_id" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 71.0
+        },
+        "scope" : {
+          "type" : "string",
+          "example" : "free"
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Basic license"
+        },
+        "url" : {
+          "type" : "string",
+          "example" : "https://www.iconfinder.com/licenses/basic"
+        }
+      }
+    },
+    "Price" : {
+      "type" : "object",
+      "required" : [
+        "currency",
+        "license",
+        "price"
+      ],
+      "properties" : {
+        "license" : {
+          "$ref" : "#/definitions/License"
+        },
+        "price" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 1.0
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "USD"
+        }
+      }
+    },
+    "Icon" : {
+      "type" : "object",
+      "required" : [
+        "categories",
+        "containers",
+        "icon_id",
+        "is_premium",
+        "prices",
+        "primiti",
+        "published_at",
+        "raster_sizes",
+        "styles",
+        "tags",
+        "temp",
+        "type",
+        "vector_sizes"
+      ],
+      "properties" : {
+        "temp" : {
+          "description" : "test enums",
+          "$ref" : "#/definitions/Test enum"
+        },
+        "primiti" : {
+          "type" : "object"
+        },
+        "vector_sizes" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "formats" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/IdAndName"
+                }
+              },
+              "size" : {
+                "type" : "number",
+                "format" : "double",
+                "example" : 60.0
+              },
+              "size_height" : {
+                "type" : "number",
+                "format" : "double",
+                "example" : 60.0
+              },
+              "size_width" : {
+                "type" : "number",
+                "format" : "double",
+                "example" : 60.0
+              },
+              "target_sizes" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "0" : {
+                      "type" : "number",
+                      "format" : "double",
+                      "example" : 30.0
+                    },
+                    "1" : {
+                      "type" : "number",
+                      "format" : "double",
+                      "example" : 60.0
+                    },
+                    "2" : {
+                      "type" : "number",
+                      "format" : "double",
+                      "example" : 120.0
+                    },
+                    "3" : {
+                      "type" : "number",
+                      "format" : "double",
+                      "example" : 180.0
+                    },
+                    "4" : {
+                      "type" : "number",
+                      "format" : "double",
+                      "example" : 240.0
+                    },
+                    "5" : {
+                      "type" : "number",
+                      "format" : "double",
+                      "example" : 480.0
+                    }
+                  },
+                  "required" : [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ]
+                }
+              }
+            },
+            "required" : [
+              "formats",
+              "size",
+              "size_height",
+              "size_width",
+              "target_sizes"
+            ]
+          }
+        },
+        "icon_id" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 233366.0
+        },
+        "type" : {
+          "type" : "string",
+          "example" : "vector"
+        },
+        "tags" : {
+          "type" : "array",
+          "example" : "interest",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "raster_sizes" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "formats" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/Format"
+                }
+              },
+              "size" : {
+                "type" : "number",
+                "format" : "double",
+                "example" : 30.0
+              },
+              "size_height" : {
+                "type" : "number",
+                "format" : "double",
+                "example" : 30.0
+              },
+              "size_width" : {
+                "type" : "number",
+                "format" : "double",
+                "example" : 30.0
+              }
+            },
+            "required" : [
+              "formats",
+              "size",
+              "size_height",
+              "size_width"
+            ]
+          }
+        },
+        "is_premium" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "styles" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/IdAndName"
+          }
+        },
+        "containers" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Format"
+          }
+        },
+        "categories" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/IdAndName"
+          }
+        },
+        "published_at" : {
+          "type" : "string",
+          "example" : "2014-01-24T12:00:14.811Z"
+        },
+        "prices" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Price"
+          }
+        }
+      }
+    },
+    "Iconset" : {
+      "type" : "object",
+      "required" : [
+        "author",
+        "categories",
+        "icons_count",
+        "iconset_id",
+        "identifier",
+        "is_premium",
+        "name",
+        "prices",
+        "published_at",
+        "styles",
+        "type"
+      ],
+      "properties" : {
+        "identifier" : {
+          "type" : "string",
+          "example" : "coloricons-5"
+        },
+        "is_premium" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "author" : {
+          "$ref" : "#/definitions/User"
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Coloricons 5"
+        },
+        "iconset_id" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 5411.0
+        },
+        "styles" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/IdAndName"
+          }
+        },
+        "icons_count" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 50.0
+        },
+        "categories" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/IdAndName"
+          }
+        },
+        "published_at" : {
+          "type" : "string",
+          "example" : "2014-05-29T11:38:43.852Z"
+        },
+        "prices" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Price"
+          }
+        },
+        "type" : {
+          "type" : "string",
+          "example" : "vector"
+        }
+      }
+    },
+    "User" : {
+      "type" : "object",
+      "required" : [
+        "company",
+        "iconsets_count",
+        "is_designer",
+        "location",
+        "name",
+        "social_dribbble",
+        "social_twitter",
+        "user_id",
+        "username",
+        "website_url"
+      ],
+      "properties" : {
+        "is_designer" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "social_twitter" : {
+          "type" : "string",
+          "example" : "webalys"
+        },
+        "website_url" : {
+          "type" : "string",
+          "example" : "http://www.webalys.com/"
+        },
+        "user_id" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 40097.0
+        },
+        "social_dribbble" : {
+          "type" : "string",
+          "example" : "webalys"
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Vincent Le Moign"
+        },
+        "company" : {
+          "type" : "string",
+          "example" : "Webalys"
+        },
+        "location" : {
+          "type" : "string",
+          "example" : "Hong Kong"
+        },
+        "iconsets_count" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 74.0
+        },
+        "username" : {
+          "type" : "string",
+          "example" : "webalys"
+        }
+      },
+      "description" : "[See docs](doc://Data transmission sdfwef)"
+    },
+    "SearchforiconsRequest" : {
+      "type" : "object",
+      "required" : [
+        "contributors",
+        "coordinates",
+        "created_at",
+        "entities",
+        "favorited",
+        "geo",
+        "id",
+        "id_str",
+        "in_reply_to_screen_name",
+        "in_reply_to_status_id",
+        "in_reply_to_status_id_str",
+        "in_reply_to_user_id",
+        "in_reply_to_user_id_str",
+        "place",
+        "possibly_sensitive",
+        "retweet_count",
+        "retweeted",
+        "source",
+        "text",
+        "truncated",
+        "user"
+      ],
+      "properties" : {
+        "in_reply_to_status_id_str" : {
+          "type" : "object"
+        },
+        "in_reply_to_status_id" : {
+          "type" : "object"
+        },
+        "possibly_sensitive" : {
+          "type" : "boolean",
+          "example" : false
+        },
+        "coordinates" : {
+          "type" : "object"
+        },
+        "truncated" : {
+          "type" : "boolean",
+          "example" : false
+        },
+        "created_at" : {
+          "type" : "string",
+          "example" : "Wed Aug 29 17:12:58 +0000 2012"
+        },
+        "in_reply_to_user_id_str" : {
+          "type" : "object"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "<a href=\"http://sites.google.com/site/yorufukurou/\" rel=\"nofollow\">YoruFukurou</a>"
+        },
+        "retweet_count" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 121.0
+        },
+        "retweeted" : {
+          "type" : "boolean",
+          "example" : false
+        },
+        "geo" : {
+          "type" : "object"
+        },
+        "in_reply_to_screen_name" : {
+          "type" : "object"
+        },
+        "entities" : {
+          "type" : "object"
+        },
+        "id_str" : {
+          "type" : "string",
+          "example" : "240859602684612608"
+        },
+        "in_reply_to_user_id" : {
+          "type" : "object"
+        },
+        "contributors" : {
+          "type" : "object"
+        },
+        "text" : {
+          "type" : "string",
+          "example" : "Introducing the Twitter Certified Products Program: https://t.co/MjJ8xAnT"
+        },
+        "id" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 2.40859602684612608E17
+        },
+        "place" : {
+          "type" : "object"
+        },
+        "user" : {
+          "type" : "object"
+        },
+        "favorited" : {
+          "type" : "boolean",
+          "example" : false
+        }
+      },
+      "description" : "ewf"
+    },
+    "Error model" : {
+      "type" : "object",
+      "required" : [
+        "code",
+        "message"
+      ],
+      "properties" : {
+        "code" : {
+          "type" : "string",
+          "example" : "not_found"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Not found"
+        }
+      }
+    },
+    "Test enum" : {
+      "type" : "string",
+      "description" : "ewfwef",
+      "enum" : [
+        "wefwef"
+      ]
+    }
+  },
+  "parameters" : {
+    "count" : {
+      "name" : "count",
+      "in" : "query",
+      "description" : "Number of icon sets to include in the result.",
+      "required" : false,
+      "type" : "integer",
+      "default" : 100,
+      "maximum" : 100.0,
+      "minimum" : 1.0
+    },
+    "after" : {
+      "name" : "after",
+      "in" : "query",
+      "description" : "`identifier` of the last entity received. If empty, the `count` first categories are returned.",
+      "required" : false,
+      "type" : "string"
+    },
+    "premium" : {
+      "name" : "premium",
+      "in" : "query",
+      "description" : "Filter premium icon sets.",
+      "required" : false,
+      "type" : "string",
+      "enum" : [
+        "all",
+        "0",
+        "1"
+      ]
+    },
+    "vector" : {
+      "name" : "vector",
+      "in" : "query",
+      "description" : "Filter vector icon sets.",
+      "required" : false,
+      "type" : "string",
+      "enum" : [
+        "all",
+        "0",
+        "1"
+      ]
+    },
+    "license" : {
+      "name" : "license",
+      "in" : "query",
+      "description" : "Filter by license scope.",
+      "required" : false,
+      "type" : "string",
+      "enum" : [
+        "none",
+        "commercial",
+        "commercial-nonattribution"
+      ]
+    }
+  },
+  "responses" : {
+    "bad_request" : {
+      "description" : "The request was malformed.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      },
+      "examples" : {
+        "Example 1" : "{\n    \"code\": \"bad_request\",\n    \"message\": \"The request was malformed.\"\n}"
+      }
+    },
+    "invalid_<parameter>" : {
+      "description" : "The request was malformed. The query parameter \n`parameter` contains an invalid value.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "bad_credentials" : {
+      "description" : "Invalid credentials were used to authenticate the request.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "permission_denied" : {
+      "description" : "Permission to the requested resource was denied. This often means that a request should have been authenticated but wasn't. dispatched to clean up the mess immediately!",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "insufficient_permissions" : {
+      "description" : "The authentication used does not have the required permissions to access the requested resource. Make sure the authentication was performed with the necessary scope.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "not_purchased" : {
+      "description" : "The premium resource you're trying to access has not been purchased by the authenticated user.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "not_found" : {
+      "description" : "The requested resource does not exist or is not publicly available.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "rate_limit_exceeded" : {
+      "description" : "API request rate limit exceeded. See `rate limiting`.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    },
+    "server_error" : {
+      "description" : "An internal server error occured. This shouldn't happen, and robots will be dispatched to deal with it immediately.",
+      "schema" : {
+        "$ref" : "#/definitions/Error model"
+      }
+    }
+  }
+}
